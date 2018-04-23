@@ -99,3 +99,11 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# pycharm
+.idea
+.idea/
+
+# embedding
+data/glove.6B.300d.txt
+snapshot/
