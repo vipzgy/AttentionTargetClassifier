@@ -67,10 +67,10 @@ def evaluate(model, data, step, vocab_srcs, vocab_tgts, config):
     corrects, size = 0, 0
 
     for batch in create_batch_iter(data, config.batch_size):
-        feature, label, feature_lengths = pair_data_variable(batch,
+        feature, target, starts, ends, feature_lengths = pair_data_variable(batch,
                                     vocab_srcs, vocab_tgts, config)
         logit = model(feature, feature_lengths)
-        correct = (torch.max(logit, 1)[1].view(label.size()).data == label.data).sum()
+        correct = (torch.max(logit, 1)[1].view(target.size()).data == target.data).sum()
         corrects += correct
         size += len(batch)
     accuracy = 100.0 * corrects / size
