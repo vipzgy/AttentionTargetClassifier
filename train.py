@@ -52,8 +52,8 @@ if __name__ == '__main__':
         embedding = read_pkl(config.embedding_pkl)
 
     # model
-    model = BILSTM(config, feature_vec.size, embedding[1] if embedding else config.embed_dim,
-                   PAD, embedding[0])
+    model = Vanilla(config, feature_vec.size, embedding[1] if embedding else config.embed_dim,
+                    PAD, label_vec.size, embedding[0])
 
     # train
     train(model, train_data, dev_data, test_data, feature_vec, label_vec, config)

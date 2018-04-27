@@ -24,7 +24,7 @@ class Configurable(object):
             for k, v in config.items(section):
                 print(k, v)
 
-    # Data
+# Data
     @property
     def data_dir(self):
         return self._config.get('Data', 'data_dir')
@@ -116,12 +116,8 @@ class Configurable(object):
         return self._config.getint('Network', 'embed_dim')
 
     @property
-    def lstm(self):
-        return self._config.getint('Network', 'lstm')
-
-    @property
-    def layer_nums(self):
-        return self._config.getint('Network', 'layer_nums')
+    def num_layers(self):
+        return self._config.getint('Network', 'num_layers')
 
     @property
     def hidden_size(self):
@@ -147,6 +143,7 @@ class Configurable(object):
     def which_model(self):
         return self._config.get('Network', 'which_model')
 
+# Optimizer
     @property
     def learning_algorithm(self):
         return self._config.get('Optimizer', 'learning_algorithm')
@@ -167,6 +164,7 @@ class Configurable(object):
     def clip_norm(self):
         return self._config.getfloat('Optimizer', 'clip_norm')
 
+# Run
     @property
     def epochs(self):
         return self._config.getint('Run', 'epochs')
