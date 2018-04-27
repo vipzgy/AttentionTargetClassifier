@@ -4,8 +4,13 @@ import torch
 import numpy
 import random
 import argparse
+from TorchNN import *
 from driver.Config import Configurable
 from driver.IO import read_pkl
+from driver.Vocab import PAD
+from driver.Train import train
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 
 if __name__ == '__main__':
@@ -47,3 +52,9 @@ if __name__ == '__main__':
         embedding = read_pkl(config.embedding_pkl)
 
     # model
+    model = BILSTM(config, feature_vec.size, embedding[1] if embedding else config.embed_dim,
+                   PAD, embedding[0])
+
+    # train
+    train(model, train_data, dev_data, test_data, feature_vec, label_vec, config)
+

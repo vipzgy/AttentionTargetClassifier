@@ -114,8 +114,7 @@ class VocabSrc:
 
 class VocabTgt:
     def __init__(self, word_list):
-        # 构建label voc, 从1开始编号, 0表示padding值
-        self.i2w = [PAD] + word_list
+        self.i2w = word_list
         self.w2i = {}
         for idx, word in enumerate(self.i2w):
             self.w2i[word] = idx
@@ -124,8 +123,8 @@ class VocabTgt:
 
     def word2id(self, xx):
         if isinstance(xx, list):
-            return [self.w2i.get(word, PAD) for word in xx]
-        return self.w2i.get(xx, PAD)
+            return [self.w2i.get(word) for word in xx]
+        return self.w2i.get(xx)
 
     def id2word(self, xx):
         if isinstance(xx, list):

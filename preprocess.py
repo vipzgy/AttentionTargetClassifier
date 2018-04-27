@@ -44,7 +44,7 @@ if __name__ == '__main__':
     # some corpus do not have dev data set
     if config.dev_file:
         print('\n')
-        dev_data, dev_sentence_len = read_word_line(config.test_file)
+        dev_data, dev_sentence_len = read_word_line(config.dev_file)
         analysis(dev_sentence_len)
     print('\n')
     test_data, test_sentence_len = read_word_line(config.test_file)
