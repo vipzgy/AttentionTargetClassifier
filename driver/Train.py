@@ -19,7 +19,7 @@ def train(model, train_data, dev_data, test_data, vocab_srcs, vocab_tgts, config
 
     # train
     global_step = 0
-    best_f1 = 0
+    best_acc = 0
     print('\nstart training...')
     for iter in range(config.epochs):
         iter_start_time = time.time()
@@ -69,7 +69,7 @@ def evaluate(model, data, step, vocab_srcs, vocab_tgts, config):
     for batch in create_batch_iter(data, config.batch_size):
         feature, target, starts, ends, feature_lengths = pair_data_variable(batch,
                                     vocab_srcs, vocab_tgts, config)
-        logit = model(feature, feature_lengths)
+        logit = model(feature, feature_lengths, starts, ends)
         correct = (torch.max(logit, 1)[1].view(target.size()).data == target.data).sum()
         corrects += correct
         size += len(batch)
