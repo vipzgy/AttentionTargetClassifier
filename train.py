@@ -54,6 +54,9 @@ if __name__ == '__main__':
     # model
     model = Vanilla(config, feature_vec.size, embedding[1] if embedding else config.embed_dim,
                     PAD, label_vec.size, embedding[0])
+    if config.use_cuda:
+        torch.backends.cudnn.enabled = True
+        model = model.cuda()
 
     # train
     train(model, train_data, dev_data, test_data, feature_vec, label_vec, config)
