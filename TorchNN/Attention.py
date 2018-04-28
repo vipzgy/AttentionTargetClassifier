@@ -38,7 +38,10 @@ class Attention(nn.Module):
             beta_0 = Variable(torch.zeros(beta.size(0), beta.size(1)))
         beta_0 += -1e20
         h_mask = h_mask * -1 + 1
-        beta = beta.masked_scatter(h_mask.type(torch.ByteTensor), beta_0.masked_select(h_mask.type(torch.ByteTensor)))
+        if self.config.use_cuda:
+            beta = beta.masked_scatter(h_mask.type(torch.cuda.ByteTensor), beta_0.masked_select(h_mask.type(torch.cuda.ByteTensor)))
+        else:
+            beta = beta.masked_scatter(h_mask.type(torch.ByteTensor), beta_0.masked_select(h_mask.type(torch.ByteTensor)))
         alpha = F.softmax(beta, dim=1)
 
         alpha = torch.unsqueeze(alpha, 2)

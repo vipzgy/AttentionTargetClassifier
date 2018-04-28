@@ -11,7 +11,7 @@ from driver.Vocab import PAD
 from driver.Train import train
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-# os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["OMP_NUM_THREADS"] = "1"
 
 
 if __name__ == '__main__':
@@ -30,7 +30,7 @@ if __name__ == '__main__':
     parse = argparse.ArgumentParser('Attention Target Classifier')
     parse.add_argument('--config_file', type=str, default='default.ini')
     parse.add_argument('--thread', type=int, default=1)
-    parse.add_argument('--use_cuda', action='store_true', default=False)
+    parse.add_argument('--use_cuda', action='store_true', default=True)
     args, extra_args = parse.parse_known_args()
 
     config = Configurable(args.config_file, extra_args)
