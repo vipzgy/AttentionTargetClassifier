@@ -42,8 +42,7 @@ if __name__ == '__main__':
 
     # load data
     train_data = read_pkl(config.train_pkl)
-    if config.dev_pkl:
-        dev_data = read_pkl(config.dev_pkl)
+    dev_data = read_pkl(config.dev_pkl)
     test_data = read_pkl(config.test_pkl)
 
     feature_vec = read_pkl(config.load_feature_voc)

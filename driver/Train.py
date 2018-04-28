@@ -37,6 +37,7 @@ def train(model, train_data, dev_data, test_data, vocab_srcs, vocab_tgts, config
             loss = F.cross_entropy(logit, target)
             loss_value = loss.data.cpu().numpy()
             loss.backward()
+            torch.nn.utils.clip_grad_norm(model.parameters(), config.clip_norm)
             optimizer.step()
 
             correct = (torch.max(logit, 1)[1].view(target.size()).data == target.data).sum()
@@ -60,7 +61,7 @@ def train(model, train_data, dev_data, test_data, vocab_srcs, vocab_tgts, config
                         if os.path.isdir(config.save_model_path):
                             os.mkdir(config.save_model_path)
                         torch.save(model.state_dict(), os.path.join(config.save_model_path,
-                                                                    model + '.' + str(global_step)))
+                                                                    'model.' + str(global_step)))
         during_time = float(time.time() - iter_start_time)
         print('one iter using time: time:{:.2f}'.format(during_time))
 
