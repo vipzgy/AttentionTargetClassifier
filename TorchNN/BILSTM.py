@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import torch
 import torch.nn as nn
+import torch.nn.init as init
 from torch.autograd import Variable
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 
@@ -15,6 +16,10 @@ class BILSTM(nn.Module):
         self.dropout = nn.Dropout(config.dropout_embed)
         self.bilstm = nn.LSTM(embed_dim, config.hidden_size, num_layers=config.num_layers,
                               dropout=config.dropout_rnn, bidirectional=True)
+        init.xavier_uniform(self.bilstm.all_weights[0][0])
+        init.xavier_uniform(self.bilstm.all_weights[0][1])
+        init.xavier_uniform(self.bilstm.all_weights[1][0])
+        init.xavier_uniform(self.bilstm.all_weights[1][1])
 
     def forward(self, w, length, start, end):
         e = self.embedding(w)

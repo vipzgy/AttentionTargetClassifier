@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import torch
 import torch.nn as nn
+import torch.nn.init as init
 import torch.nn.functional as F
 from torch.autograd import Variable
 
@@ -10,7 +11,9 @@ class Attention(nn.Module):
         super(Attention, self).__init__()
         self.config = config
         self.w1 = nn.Linear(config.hidden_size * 4, config.attention_size, bias=True)
+        init.xavier_uniform(self.w1.weight)
         self.u = nn.Linear(config.attention_size, 1, bias=False)
+        init.xavier_uniform(self.u.weight)
 
     def forward(self, h, h_mask, ht):
         ht = torch.mean(ht, 1)
