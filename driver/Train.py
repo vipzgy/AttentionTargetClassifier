@@ -57,11 +57,13 @@ def train(model, train_data, dev_data, test_data, vocab_srcs, vocab_tgts, config
                 if dev_acc > best_acc:
                     print("Exceed best acc: history = %.2f, current = %.2f" % (best_acc, dev_acc))
                     best_acc = dev_acc
-                    if config.save_after > 0 and iter > config.save_after:
+                    if -1 < config.save_after < iter:
                         if os.path.isdir(config.save_model_path):
+                            pass
+                        else:
                             os.mkdir(config.save_model_path)
-                        torch.save(model.state_dict(), os.path.join(config.save_model_path,
-                                                                    'model.' + str(global_step)))
+                    torch.save(model.state_dict(), os.path.join(config.save_model_path,
+                                                                'model.' + str(global_step)))
         during_time = float(time.time() - iter_start_time)
         print('one iter using time: time:{:.2f}'.format(during_time))
 
