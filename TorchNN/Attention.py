@@ -18,7 +18,10 @@ class Attention(nn.Module):
 
         ht = ht.repeat(1, h.size(1), 1)
         h_cat = torch.cat([h, ht], 2)
-        h_mask = Variable(torch.FloatTensor(h_mask))
+        if self.config.use_cuda:
+            h_mask = Variable(torch.FloatTensor(h_mask)).cuda()
+        else:
+            h_mask = Variable(torch.FloatTensor(h_mask))
         h_mask1 = h_mask.unsqueeze(2).repeat(1, 1, self.config.hidden_size * 4)
         h_cat = torch.mul(h_cat, h_mask1)
 
@@ -29,7 +32,10 @@ class Attention(nn.Module):
         beta = self.u(h_cat)
 
         beta = torch.squeeze(beta, 2)
-        beta_0 = Variable(torch.zeros(beta.size(0), beta.size(1)))
+        if self.config.use_cuda:
+            beta_0 = Variable(torch.zeros(beta.size(0), beta.size(1))).cuda()
+        else:
+            beta_0 = Variable(torch.zeros(beta.size(0), beta.size(1)))
         beta_0 += -1e20
         h_mask = h_mask * -1 + 1
         beta = beta.masked_scatter(h_mask.type(torch.ByteTensor), beta_0.masked_select(h_mask.type(torch.ByteTensor)))

@@ -30,7 +30,10 @@ class BILSTM(nn.Module):
         y_size = h_tem.size(1)
         z_size = h_tem.size(2)
         h_tem = h_tem.contiguous().view(x_size * y_size, z_size)
-        h_tem = torch.cat([h_tem, Variable(torch.zeros(1, z_size))], 0)
+        if self.config.use_cuda:
+            h_tem = torch.cat([h_tem, Variable(torch.zeros(1, z_size)).cuda()], 0)
+        else:
+            h_tem = torch.cat([h_tem, Variable(torch.zeros(1, z_size))], 0)
 
         # list[list] 与h相对应的坐标
         padding_id = x_size * y_size
@@ -82,13 +85,19 @@ class BILSTM(nn.Module):
                     idx, (s, e) in enumerate(zip(start, end))]
 
         # slice
-        left_slice = torch.index_select(h_tem, 0, Variable(torch.LongTensor(left_index)))
+        if self.config.use_cuda:
+            left_slice = torch.index_select(h_tem, 0, Variable(torch.LongTensor(left_index)).cuda())
+            right_slice = torch.index_select(h_tem, 0, Variable(torch.LongTensor(right_index)).cuda())
+            targeted_slice = torch.index_select(h_tem, 0, Variable(torch.LongTensor(targeted_index)).cuda())
+            s_slice = torch.index_select(h_tem, 0, Variable(torch.LongTensor(s_index)).cuda())
+        else:
+            left_slice = torch.index_select(h_tem, 0, Variable(torch.LongTensor(left_index)))
+            right_slice = torch.index_select(h_tem, 0, Variable(torch.LongTensor(right_index)))
+            targeted_slice = torch.index_select(h_tem, 0, Variable(torch.LongTensor(targeted_index)))
+            s_slice = torch.index_select(h_tem, 0, Variable(torch.LongTensor(s_index)))
         left_slice = left_slice.view(x_size, left_max, z_size)
-        right_slice = torch.index_select(h_tem, 0, Variable(torch.LongTensor(right_index)))
         right_slice = right_slice.view(x_size, right_max, z_size)
-        targeted_slice = torch.index_select(h_tem, 0, Variable(torch.LongTensor(targeted_index)))
         targeted_slice = targeted_slice.view(x_size, targeted_max, z_size)
-        s_slice = torch.index_select(h_tem, 0, Variable(torch.LongTensor(s_index)))
         s_slice = s_slice.view(x_size, s_max, z_size)
 
         return s_slice, targeted_slice, left_slice, right_slice, s_mask, targeted_mask, left_mask, right_mask

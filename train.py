@@ -11,6 +11,7 @@ from driver.Vocab import PAD
 from driver.Train import train
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+# os.environ["OMP_NUM_THREADS"] = "1"
 
 
 if __name__ == '__main__':
