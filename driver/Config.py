@@ -174,10 +174,6 @@ class Configurable(object):
         return self._config.getint('Run', 'batch_size')
 
     @property
-    def log_interval(self):
-        return self._config.getint('Run', 'log_interval')
-
-    @property
     def test_interval(self):
         return self._config.getint('Run', 'test_interval')
 
