@@ -52,8 +52,18 @@ if __name__ == '__main__':
         embedding = read_pkl(config.embedding_pkl)
 
     # model
-    model = Vanilla(config, feature_vec.size, embedding[1] if embedding else config.embed_dim,
-                    PAD, label_vec.size, embedding[0])
+    if config.which_model == 'Vanilla':
+        model = Vanilla(config, feature_vec.size, embedding[1] if embedding else config.embed_dim,
+                        PAD, label_vec.size, embedding[0])
+    elif config.which_model == 'Contextualized':
+        model = Contextualized(config, feature_vec.size, embedding[1] if embedding else config.embed_dim,
+                               PAD, label_vec.size, embedding[0])
+    elif config.which_model == 'ContextualizedGates':
+        model = ContextualizedGates(config, feature_vec.size, embedding[1] if embedding else config.embed_dim,
+                                    PAD, label_vec.size, embedding[0])
+    else:
+        print('please choose right model')
+        exit()
     if config.use_cuda:
         torch.backends.cudnn.enabled = True
         model = model.cuda()
