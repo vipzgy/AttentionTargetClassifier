@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import torch
 import torch.nn as nn
 import torch.nn.init as init
 from .BILSTM import BILSTM
@@ -14,12 +15,8 @@ class Contextualized(nn.Module):
         self.attention_left = Attention(config)
         self.attention_right = Attention(config)
 
-        self.linear_s = nn.Linear(config.hidden_size * 2, label_size)
-        init.xavier_uniform(self.linear_s.weight)
-        self.linear_left = nn.Linear(config.hidden_size * 2, label_size)
-        init.xavier_uniform(self.linear_left.weight)
-        self.linear_right = nn.Linear(config.hidden_size * 2, label_size)
-        init.xavier_uniform(self.linear_right.weight)
+        self.w = nn.Linear(config.hidden_size * 2 * 3, label_size)
+        init.xavier_uniform(self.w.weight)
 
     def forward(self, w, length, start, end):
         s_slice, targeted_slice, left_slice, right_slice, \
@@ -28,9 +25,7 @@ class Contextualized(nn.Module):
         sl = self.attention_left(left_slice, left_mask, targeted_slice)
         sr = self.attention_right(right_slice, right_mask, targeted_slice)
 
-        s = self.linear_s(s)
-        sl = self.linear_left(sl)
-        sr = self.linear_right(sr)
+        ss = torch.cat([s, sl, sr], 1)
 
-        result = s + sl + sr
+        result = self.w(ss)
         return result
