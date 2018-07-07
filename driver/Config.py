@@ -16,9 +16,9 @@ class Configurable(object):
                     config.set(section, k, v)
 
         self._config = config
-        # if not os.path.isdir(self.save_dir):
-        #     os.mkdir(self.save_dir)
-        # config.write(open(self.config_file, 'w'))
+        if not os.path.isdir(self.save_model_path):
+            os.makedirs(self.save_model_path)
+        config.write(open(self.config_file, 'w'))
         print('Load config file successfully.\n')
         for section in config.sections():
             for k, v in config.items(section):
@@ -50,10 +50,6 @@ class Configurable(object):
         return self._config.getint('Data', 'max_length')
 
     @property
-    def percentile(self):
-        return self._config.getint('Data', 'percentile')
-
-    @property
     def shuffle(self):
         return self._config.getboolean('Data', 'shuffle')
 
@@ -65,6 +61,10 @@ class Configurable(object):
     @property
     def save_dir(self):
         return self._config.get('Save', 'save_dir')
+
+    @property
+    def config_file(self):
+        return self._config.get('Save', 'config_file')
 
     @property
     def save_model_path(self):

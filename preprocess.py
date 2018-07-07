@@ -9,19 +9,21 @@ from driver.IO import read_word_line
 from driver.Vocab import VocabSrc, VocabTgt
 
 
-def analysis(sentence_length, feature_dict=None, label_dict=None):
+def analysis(sentence_length, target=None, label=None):
 
-    if feature_dict is not None:
-        print('单词个数为: ', len(feature_dict))
-    if label_dict is not None:
-        print('标签个数有: {0}个'.format(len(label_dict)))
-        print('标签有: ')
-        for i in label_dict.keys():
-            print(i)
-    sentence_length = sorted(sentence_length.items(), key=lambda item: item[0], reverse=False)
+    if target is not None:
+        print('单词个数为：', len(target))
+    if label is not None:
+        print('标签个数有：{0}个'.format(len(label)))
+        print('标签有：')
+        for i in label.keys():
+            print("标签为：{0}，个数有：{1}".format(i, label[i]))
+    sentence_length = sorted(sentence_length.items(), key=lambda k: k[0], reverse=False)
     # sentence_length = sentence_length.most_common()
+    count = 0
     for item in sentence_length:
-        print("句子长度为： {0}  有{1}句".format(item[0], item[1]))
+        print("句子长度为：{0}，有{1}".format(item[0], item[1]))
+    print("句子个数为：", count)
 
 
 if __name__ == '__main__':
@@ -44,11 +46,13 @@ if __name__ == '__main__':
     # some corpus do not have dev data set
     if config.dev_file:
         print('\n')
-        dev_data, dev_sentence_len = read_word_line(config.dev_file)
-        analysis(dev_sentence_len)
+        dev_data, dev_sentence_len, dev_feature, dev_label = read_word_line(config.dev_file,
+                                                                            is_train=True)
+        analysis(dev_sentence_len, dev_feature, dev_label)
     print('\n')
-    test_data, test_sentence_len = read_word_line(config.test_file)
-    analysis(test_sentence_len)
+    test_data, test_sentence_len, test_feature, test_label = read_word_line(config.test_file,
+                                                                            is_train=True)
+    analysis(test_sentence_len, test_feature, test_label)
 
     if not os.path.isdir(config.save_dir):
         os.mkdir(config.save_dir)
@@ -60,11 +64,11 @@ if __name__ == '__main__':
     # vocab
     feature_list = [k for k, v in feature_dict.most_common(config.vocab_size)]
     label_list = [k for k in label_dict.keys()]
+    pickle.dump(feature_list, open(config.save_feature_voc, 'wb'))
+    pickle.dump(label_list, open(config.save_label_voc, 'wb'))
 
     feature_voc = VocabSrc(feature_list)
     label_voc = VocabTgt(label_list)
-    pickle.dump(feature_voc, open(config.save_feature_voc, 'wb'))
-    pickle.dump(label_voc, open(config.save_label_voc, 'wb'))
 
     # embedding
     if config.embedding_file:
