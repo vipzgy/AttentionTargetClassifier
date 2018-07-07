@@ -10,7 +10,8 @@ class BILSTM(nn.Module):
     def __init__(self, config, embed_size, embed_dim, padding_idx, embedding=None):
         super(BILSTM, self).__init__()
         self.config = config
-        self.embedding = nn.Embedding(embed_size, embed_dim, padding_idx=padding_idx)
+        self.embedding = nn.Embedding(embed_size, embed_dim, max_norm=config.max_norm,
+                                      padding_idx=padding_idx)
         if embedding is not None:
             self.embedding.weight.data.copy_(torch.from_numpy(embedding))
         self.dropout = nn.Dropout(config.dropout_embed)
