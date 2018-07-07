@@ -28,6 +28,7 @@ class Attention(nn.Module):
             h_mask = Variable(torch.IntTensor(h_mask)).cuda()
             zeros_hidden = Variable(torch.zeros(h_cat.size(0), h_cat.size(1), self.config.hidden_size * 4)).cuda()
             zeros_attention = Variable(torch.zeros(h_cat.size(0), h_cat.size(1), self.config.attention_size)).cuda()
+            h_mask = torch.abs(h_mask - 1).type(torch.cuda.ByteTensor)
         else:
             # function 1
             # h_mask = Variable(torch.FloatTensor(h_mask))
@@ -35,11 +36,12 @@ class Attention(nn.Module):
             h_mask = Variable(torch.IntTensor(h_mask))
             zeros_hidden = Variable(torch.zeros(h_cat.size(0), h_cat.size(1), self.config.hidden_size * 4))
             zeros_attention = Variable(torch.zeros(h_cat.size(0), h_cat.size(1), self.config.attention_size))
+            h_mask = torch.abs(h_mask - 1).type(torch.ByteTensor)
         # function 1
         # h_mask1 = h_mask.unsqueeze(2).repeat(1, 1, self.config.hidden_size * 4)
         # h_cat = torch.mul(h_cat, h_mask1)
         # function 2
-        h_mask = torch.abs(h_mask - 1).type(torch.ByteTensor)
+        # h_mask = torch.abs(h_mask - 1).type(torch.ByteTensor)
         h_mask = torch.unsqueeze(h_mask, 2)
         h_cat = h_cat.masked_scatter(h_mask, zeros_hidden.masked_select(h_mask))
 
