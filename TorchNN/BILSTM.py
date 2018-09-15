@@ -45,16 +45,17 @@ class BILSTM(nn.Module):
         padding_id = x_size * y_size
 
         left_max = max(start)
-        left = [[idx * y_size + j if j < x else padding_id for j in range(left_max)] for idx, x in enumerate(start)]
+        left = [[idx * y_size + j if j < x else padding_id for j in range(left_max)]
+                for idx, x in enumerate(start)]
 
         right_max = max([l - e - 1 for l, e in zip(length, end)])
-        right = [[idx * y_size + j + e + 1 if j < l - e - 1 else padding_id for j in range(right_max)] for
-                 idx, (e, l) in enumerate(zip(end, length))]
+        right = [[idx * y_size + j + e + 1 if j < l - e - 1 else padding_id for j in
+                  range(right_max)] for idx, (e, l) in enumerate(zip(end, length))]
 
         targeted_length = [e - s + 1 for s, e in zip(start, end)]
         targeted_max = max(targeted_length)
-        targeted = [[idx * y_size + j + s if j < e - s + 1 else padding_id for j in range(targeted_max)] for
-                    idx, (s, e) in enumerate(zip(start, end))]
+        targeted = [[idx * y_size + j + s if j < e - s + 1 else padding_id for j in
+                     range(targeted_max)] for idx, (s, e) in enumerate(zip(start, end))]
 
         s_max = max([l - e + s - 1 for l, s, e in zip(length, start, end)])
         s = []
@@ -95,11 +96,14 @@ class BILSTM(nn.Module):
         if self.config.use_cuda:
             left_slice = None
             if len(left_index) != 0:
-                left_slice = torch.index_select(h_tem, 0, Variable(torch.LongTensor(left_index)).cuda())
+                left_slice = torch.index_select(
+                    h_tem, 0, Variable(torch.LongTensor(left_index)).cuda())
             right_slice = None
             if len(right_index) != 0:
-                right_slice = torch.index_select(h_tem, 0, Variable(torch.LongTensor(right_index)).cuda())
-            targeted_slice = torch.index_select(h_tem, 0, Variable(torch.LongTensor(targeted_index)).cuda())
+                right_slice = torch.index_select(
+                    h_tem, 0, Variable(torch.LongTensor(right_index)).cuda())
+            targeted_slice = torch.index_select(
+                h_tem, 0, Variable(torch.LongTensor(targeted_index)).cuda())
             s_slice = None
             if len(s_index) != 0:
                 s_slice = torch.index_select(h_tem, 0, Variable(torch.LongTensor(s_index)).cuda())
@@ -110,7 +114,8 @@ class BILSTM(nn.Module):
             right_slice = None
             if len(right_index) != 0:
                 right_slice = torch.index_select(h_tem, 0, Variable(torch.LongTensor(right_index)))
-            targeted_slice = torch.index_select(h_tem, 0, Variable(torch.LongTensor(targeted_index)))
+            targeted_slice = torch.index_select(
+                h_tem, 0, Variable(torch.LongTensor(targeted_index)))
             s_slice = None
             if len(s_index) != 0:
                 s_slice = torch.index_select(h_tem, 0, Variable(torch.LongTensor(s_index)))
@@ -123,4 +128,5 @@ class BILSTM(nn.Module):
         if len(s_index) != 0:
             s_slice = s_slice.view(x_size, s_max, z_size)
 
-        return s_slice, targeted_slice, left_slice, right_slice, s_mask, targeted_mask, left_mask, right_mask
+        return s_slice, targeted_slice, left_slice, right_slice, \
+               s_mask, targeted_mask, left_mask, right_mask
